@@ -7,6 +7,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-15
@@ -46,3 +49,15 @@ jobs:
         with:
           name: TripperMaps-unsigned-ipa
           path: TripperMaps-unsigned.ipa
+
+      # Also keep the latest .ipa on a "builds" branch, so it can be fetched with plain git.
+      - name: Publish IPA to builds branch
+        run: |
+          mkdir -p /tmp/builds && cp TripperMaps-unsigned.ipa /tmp/builds/
+          cd /tmp/builds
+          git init -q -b builds
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add TripperMaps-unsigned.ipa
+          git commit -q -m "Build ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" builds
