@@ -24,9 +24,9 @@ final class FrameCompositor {
         self.tiles = tiles
         self.style = style
         if let r = route {
-            route = Array(UnsafeBufferPointer(start: r.points(), count: r.pointCount))
+            self.route = Array(UnsafeBufferPointer(start: r.points(), count: r.pointCount))
         } else {
-            route = []
+            self.route = []
         }
         let attrs: [String: Any] = [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
