@@ -8,7 +8,7 @@ struct StreamTier: Equatable {
 }
 
 /// Picks frame rate + bitrate from speed, battery, thermal state and Low Power Mode.
-/// 12 fps is the ceiling: the dash decoder starts blinking above ~12 fps (TripperDash++ PR #150).
+/// Turbo (12 fps) runs on battery too when switched on. 12 fps is the ceiling: the dash decoder starts blinking above ~12 fps (TripperDash++ PR #150).
 final class PowerGovernor {
     static let turbo  = StreamTier(name: "Turbo",  fps: 12, bitrate: 650_000)
     static let smooth = StreamTier(name: "Smooth", fps: 10, bitrate: 550_000)
@@ -40,7 +40,8 @@ final class PowerGovernor {
         let info = ProcessInfo.processInfo
         let hot = info.thermalState == .serious || info.thermalState == .critical
         if hot || info.isLowPowerModeEnabled || (!charging && battery < 0.2) { return Self.eco }
-        if allowTurbo && charging && info.thermalState == .nominal { return Self.turbo }
+        // Turbo is the rider's call, charging or not; only real heat (above) or Low Power Mode overrides it.
+        if allowTurbo { return Self.turbo }
         return Self.smooth
     }
 }

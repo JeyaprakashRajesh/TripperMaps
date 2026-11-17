@@ -34,7 +34,7 @@ struct ContentView: View {
 
                 Section("Options") {
                     Toggle("Dark map", isOn: $ride.darkMap).disabled(ride.isBusy)
-                    Toggle("Turbo 12 fps (only while charging)", isOn: $ride.allowTurbo)
+                    Toggle("Turbo 12 fps", isOn: $ride.allowTurbo)
                 }
 
                 Section {
